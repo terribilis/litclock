@@ -22,11 +22,11 @@ else:
     import spidev
 
 class DisplayManager:
-    # Pin definitions
-    RST_PIN = 17
-    DC_PIN = 25
-    CS_PIN = 8
-    BUSY_PIN = 24
+    # Pin definitions using BOARD numbering (physical pin numbers)
+    RST_PIN = 11    # Physical pin 11 (BCM 17)
+    DC_PIN = 22     # Physical pin 22 (BCM 25)
+    CS_PIN = 24     # Physical pin 24 (BCM 8, CE0)
+    BUSY_PIN = 18   # Physical pin 18 (BCM 24)
 
     # Display resolution
     EPD_WIDTH = 960
@@ -42,7 +42,7 @@ class DisplayManager:
         self.initialized = False
         
         # Set GPIO mode at initialization
-        GPIO.setmode(GPIO.BCM)
+        GPIO.setmode(GPIO.BOARD)  # Use physical pin numbers
         GPIO.setwarnings(False)
 
     def digital_write(self, pin, value):

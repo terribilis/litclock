@@ -28,32 +28,48 @@ def create_sample_quotes():
             "15:30|3:30 P.M.|The only way to do great work is to love what you do.|Steve Jobs|Walter Isaacson|sfw"
         ]
         with open(quotes_file, 'w') as f:
-            f.write("HH:MM|H:MM A.M.|Quote|Book|Author|Rating\n")
             f.write("\n".join(sample_quotes))
         print(f"Created sample quotes file: {quotes_file}")
 
 def convert_csv_to_json():
     """Convert quotes.csv to quotes.json if it exists."""
-    csv_file = 'data/quotes.csv'
+    csv_file = 'data/litclock_annotated.csv'
+    if not os.path.exists(csv_file):
+        csv_file = 'data/quotes.csv'
+    
     json_file = 'data/quotes.json'
     
     if os.path.exists(csv_file):
-        df = pd.read_csv(csv_file, sep='|')
-        quotes_dict = {}
-        
-        for _, row in df.iterrows():
-            time_key = row['HH:MM']
-            quotes_dict[time_key] = {
-                'display_time': row['H:MM A.M.'],
-                'quote': row['Quote'],
-                'book': row['Book'],
-                'author': row['Author'],
-                'rating': row['Rating']
-            }
-        
-        with open(json_file, 'w') as f:
-            json.dump(quotes_dict, f, indent=4)
-        print(f"Converted {csv_file} to {json_file}")
+        try:
+            # Read CSV with pipe delimiter and no header
+            df = pd.read_csv(csv_file, sep='|', header=None, 
+                           names=['time_key', 'display_time', 'quote', 'book', 'author', 'rating'])
+            
+            quotes_dict = {}
+            
+            for _, row in df.iterrows():
+                time_key = row['time_key']
+                
+                # Default to 'unknown' if rating is missing or empty
+                rating = row.get('rating', 'unknown')
+                if pd.isna(rating) or rating == '':
+                    rating = 'unknown'
+                    
+                quotes_dict[time_key] = {
+                    'display_time': row['display_time'],
+                    'quote': row['quote'],
+                    'book': row['book'],
+                    'author': row['author'],
+                    'rating': rating.lower()
+                }
+            
+            with open(json_file, 'w') as f:
+                json.dump(quotes_dict, f, indent=4)
+            print(f"Converted {csv_file} to {json_file}")
+        except Exception as e:
+            print(f"Error converting CSV to JSON: {e}")
+    else:
+        print(f"CSV file not found: {csv_file}")
 
 def create_config_file():
     """Create a default config.json file if it doesn't exist."""
@@ -64,7 +80,8 @@ def create_config_file():
             'display_brightness': 100,
             'font_size': 24,
             'show_book_info': True,
-            'show_author': True
+            'show_author': True,
+            'content_filter': 'all'  # Options: 'sfw', 'nsfw', 'all'
         }
         with open(config_file, 'w') as f:
             json.dump(config, f, indent=4)

@@ -26,6 +26,7 @@ I want to give thanks to JohannesNE as I used their quotes csv.
 - Required Python packages (see requirements.txt)
 
 ## Installation
+0. You may need to create a virutal environment.
 
 1. Clone this repository:
    ```bash

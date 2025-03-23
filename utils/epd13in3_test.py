@@ -63,7 +63,7 @@ try:
     drawred = ImageDraw.Draw(HRedimage)
     drawblack.text((10, 0), 'hello world', font = font24, fill = 0)
     drawred.text((10, 20), '13.3inch e-Paper (B)', font = font24, fill = 0)
-    drawblack.text((150, 0), u'微雪电子', font = font24, fill = 0)
+    drawblack.text((150, 0), 'Waveshare Electronics', font = font24, fill = 0)
     drawred.line((20, 50, 70, 100), fill = 0)
     drawblack.line((70, 50, 20, 100), fill = 0)
     drawred.rectangle((20, 50, 70, 100), outline = 0)
